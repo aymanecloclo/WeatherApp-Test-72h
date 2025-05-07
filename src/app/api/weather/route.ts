@@ -3,76 +3,132 @@ import redis from '../../../../lib/redis'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 300 // 5 minutes
+
+interface WeatherResponse {
+  coord: {
+    lat: number
+    lon: number
+  }
+  [key: string]: any
+}
+
+interface PollutionResponse {
+  list: {
+    main: {
+      aqi: number
+    }
+    components: {
+      [key: string]: number
+    }
+  }[]
+}
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const city = searchParams.get('city')?.trim() || 'Paris'
+
+  if (!city) {
+    return NextResponse.json(
+      { error: "Le paramètre 'city' est requis" },
+      { status: 400 }
+    )
+  }
+
+  // Configuration
+  const API_KEY = process.env.OPENWEATHER_API_KEY
+  const CACHE_TTL = 300 // 5 minutes en secondes
+  const cacheKey = `weather:${city.toLowerCase()}`
+
+  if (!API_KEY) {
+    console.error('❌ Clé API OpenWeather manquante')
+    return NextResponse.json(
+      { error: 'Configuration serveur invalide' },
+      { status: 500 }
+    )
+  }
+
   try {
-    const { searchParams } = new URL(request.url)
-    const city = searchParams.get('city') || 'Paris'
-
-    const cacheKey = `weather:${city.toLowerCase()}`
-    let cachedData = null
-
-    // 🔁 Lire cache Redis
+    // 1. Vérifier le cache Redis
     try {
       const cached = await redis.get(cacheKey)
       if (cached) {
         try {
-          cachedData = JSON.parse(cached)
-        } catch {
-          await redis.del(cacheKey) // Cache corrompu
+          const cachedData = JSON.parse(cached)
+          return NextResponse.json({ ...cachedData, source: 'cache' })
+        } catch (parseError) {
+          console.error('Erreur de parsing du cache:', parseError)
+          await redis.del(cacheKey)
         }
       }
-    } catch (err) {
-      console.error('Erreur Redis:', err)
+    } catch (redisError) {
+      console.error('Erreur Redis:', redisError)
     }
 
-    if (cachedData) {
-      return NextResponse.json({ ...cachedData, source: 'cache' })
+    // 2. Récupérer les données météo
+    const weatherParams = {
+      q: city,
+      appid: API_KEY,
+      units: 'metric',
+      lang: 'fr'
     }
 
-    const apiKey = '7ab4338a56030b82d25ba8a78b578696'
+    const weatherRes = await axios.get<WeatherResponse>(
+      'https://api.openweathermap.org/data/2.5/weather',
+      { params: weatherParams, timeout: 5000 }
+    )
 
-    // ☁️ Appel à /weather avec Axios
-    const weatherRes = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
-      params: {
-        q: city,
-        appid: apiKey,
-        units: 'metric',
-      },
-    })
+    const { coord } = weatherRes.data
+    if (!coord?.lat || !coord?.lon) {
+      throw new Error('Coordonnées géographiques manquantes')
+    }
 
-    const weatherData = weatherRes.data
-    const { lat, lon } = weatherData.coord
+    // 3. Récupérer les données de pollution
+    const pollutionRes = await axios.get<PollutionResponse>(
+      'https://api.openweathermap.org/data/2.5/air_pollution',
+      { 
+        params: {
+          lat: coord.lat,
+          lon: coord.lon,
+          appid: API_KEY
+        },
+        timeout: 5000
+      }
+    )
 
-    if (!lat || !lon) throw new Error('Coordonnées absentes')
-
-    // 🏭 Pollution
-    const pollutionRes = await axios.get('https://api.openweathermap.org/data/2.5/air_pollution', {
-      params: {
-        lat,
-        lon,
-        appid: apiKey,
-      },
-    })
-
-    const fullData = {
+    // 4. Formater la réponse
+    const responseData = {
       city,
-      weather: weatherData,
-      pollution: pollutionRes.data,
-      coord: { lat, lon },
+      weather: weatherRes.data,
+      pollution: pollutionRes.data.list[0] || null,
+      coord,
+      timestamp: Date.now()
     }
 
-    await redis.setex(cacheKey, 300, JSON.stringify(fullData))
+    // 5. Mettre en cache
+    try {
+      await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(responseData))
+    } catch (cacheError) {
+      console.error('Erreur de mise en cache:', cacheError)
+    }
 
-    return NextResponse.json({ ...fullData, source: 'api' })
+    return NextResponse.json({ ...responseData, source: 'api' })
 
   } catch (error: any) {
-    console.error('❌ Erreur API Axios:', error.message)
+    console.error('Erreur API:', error.message)
+
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status || 500
+      const message = error.response?.data?.message || 'Erreur de communication avec le service météo'
+      
+      return NextResponse.json(
+        { error: message },
+        { status }
+      )
+    }
+
     return NextResponse.json(
-      {
-        error: 'Erreur serveur',
-        details: error.message,
-      },
+      { error: 'Erreur de traitement', details: error.message },
       { status: 500 }
     )
   }

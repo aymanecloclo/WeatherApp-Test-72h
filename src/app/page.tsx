@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import WeatherCard from '../../components/WeatherCard'
 import axiosInstance from '../../lib/axiosInstance'
 import WeatherSearch from '../../components/WeatherSearch'
 import SunriseSunset from '../../components/SunriseSunset'
@@ -13,39 +14,30 @@ export default function Home() {
   const [weatherData, setWeatherData] = useState<any>(null)
   const [city, setCity] = useState<string>('Paris')
 
-  const fetchWeather = async (selectedCity: string) => {
+  const fetchWeather = useCallback(async (selectedCity: string) => {
     try {
       const res = await axiosInstance.get(`/weather?city=${selectedCity}`)
       setWeatherData(res.data)
       setCity(selectedCity)
 
-      // 🎨 Déduire le thème en fonction du weather
       const weatherMain = res.data.weather.weather[0]?.main?.toLowerCase() || ''
-      if (weatherMain.includes('sun')) setWeatherTheme('sunny')
-      else if (weatherMain.includes('rain')) setWeatherTheme('rainy')
-      else if (weatherMain.includes('snow')) setWeatherTheme('snowy')
-      else if (weatherMain.includes('cloud')) setWeatherTheme('cloudy')
-      else setWeatherTheme('default')
-
+      setWeatherTheme(
+        weatherMain.includes('sun') ? 'sunny' :
+        weatherMain.includes('rain') ? 'rainy' :
+        weatherMain.includes('snow') ? 'snowy' :
+        weatherMain.includes('cloud') ? 'cloudy' :
+        'default'
+      )
     } catch (err) {
       console.error('Erreur météo:', err)
+      setWeatherData(null) 
     }
-  }
-
-  useEffect(() => {
-    fetchWeather(city) // Fetch au chargement initial
   }, [])
 
-  const getBackground = () => {
-    switch (weatherTheme) {
-      case 'sunny': return 'bg-gradient-to-br from-amber-400 to-orange-500'
-      case 'rainy': return 'bg-gradient-to-br from-slate-500 to-blue-700'
-      case 'snowy': return 'bg-gradient-to-br from-cyan-200 to-blue-400'
-      case 'cloudy': return 'bg-gradient-to-br from-gray-400 to-gray-600'
-      default: return 'bg-gradient-to-br from-blue-500 to-indigo-700'
-    }
-  }
-
+  useEffect(() => {
+    fetchWeather(city) 
+  }, [city, fetchWeather])
+console.log(weatherData);
   const getWeatherIcon = () => {
     switch (weatherTheme) {
       case 'sunny': return <FiSun className="text-amber-300 text-4xl animate-pulse" />
@@ -57,45 +49,43 @@ export default function Home() {
   }
 
   return (
-    <main className={`min-h-screen ${getBackground()} p-4 transition-all duration-500 ease-in-out flex w-full`}>
-      <div className="md:w-7/12 border">
+    <main className={`min-h-screen bg-blue-400 p-4 transition-all duration-500 ease-in-out flex flex-col md:flex-row`}>
+      <div className="md:w-8/12 rounded-lg shadow-xl p-6">
         {weatherData ? (
           <>
-            <WeatherDetails data={weatherData.weather} />
+            <WeatherDetails data={weatherData.weather.main} wind={weatherData.weather.wind.speed}  />
             <SunriseSunset
               sunrise={weatherData.weather.sys.sunrise}
               sunset={weatherData.weather.sys.sunset}
             />
-            <AirQuality aqi={weatherData.pollution.list[0].main.aqi} />
-            <GeoInfo lat={weatherData.coord.lat} lon={weatherData.coord.lon} />
+            <GeoInfo lat={weatherData.coord.lat} lon={weatherData.coord.lon} visibility={weatherData.coord.visibility}  />
           </>
         ) : (
-          <p className="text-white">Chargement des données météo...</p>
+          <p className="text-white text-lg animate-pulse">Chargement des données météo...</p>
         )}
       </div>
 
-      <div className="md:w-5/12 border">
-        {/* Header animé */}
+      <div className="md:w-4/12 rounded-lg shadow-xl p-6">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
             {getWeatherIcon()}
-            <h1 className="text-3xl font-bold text-white drop-shadow-lg">
+            <h1 className="text-4xl font-semibold text-white drop-shadow-lg">
               Climatic<span className="font-light">.io</span>
             </h1>
           </div>
-          <div className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
-            <span className="text-white">🌎</span>
+          <div className="h-12 w-12 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center cursor-pointer">
+            <span className="text-white text-xl">🌎</span>
           </div>
         </div>
 
-        {/* Widget principal */}
-        <div className="bg-white/10 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+        {/* Search Widget */}
+        <div className="bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4">
           <WeatherSearch setTheme={setWeatherTheme} onSearch={fetchWeather} />
         </div>
 
         {/* Footer */}
         <div className="mt-8 text-center text-white/70 text-sm">
-          <p>Données météo en temps réel • API OpenWeather</p>
+          <p>Donnees météo en temps réel • API OpenWeather</p>
         </div>
       </div>
     </main>

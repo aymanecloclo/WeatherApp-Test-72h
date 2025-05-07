@@ -11,9 +11,18 @@ function formatTime(timestamp: number) {
 
 export default function SunriseSunset({ sunrise, sunset }: Props) {
   return (
-    <div className="text-white mt-4">
-      <p>🌅 Lever du soleil : {formatTime(sunrise)}</p>
-      <p>🌇 Coucher du soleil : {formatTime(sunset)}</p>
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+      <h3 className="text-lg font-semibold text-white mb-4">Sun & Moon</h3>
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="text-white/80">Sunrise</span>
+          <span className="text-white font-medium">{formatTime(sunrise)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-white/80">Sunset</span>
+          <span className="text-white font-medium">{formatTime(sunset)}</span>
+        </div>
+      </div>
     </div>
   );
 }

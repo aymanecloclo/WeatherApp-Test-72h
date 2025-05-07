@@ -7,15 +7,31 @@ export default function WeatherSearch() {
   const [city, setCity] = useState('Paris')
   const [weather, setWeather] = useState<any>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchWeather = async () => {
-    if (!city) return
-    
+    if (!city.trim()) return // Empêche la requête si la ville est vide
+
     setLoading(true)
+    setError(null) // Réinitialiser l'erreur précédente
     try {
       const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}`)
       const data = await response.json()
-      setWeather(data)
+
+      if (response.ok) {
+        if (data?.weather) {
+          setWeather(data)
+        } else {
+          setWeather(null)
+          setError('Données météo manquantes.')
+        }
+      } else {
+        setWeather(null)
+        setError(data.error || 'Une erreur est survenue lors de la récupération des données météo.')
+      }
+    } catch (err) {
+      setWeather(null)
+      setError('Erreur de réseau ou de serveur. Veuillez réessayer.')
     } finally {
       setLoading(false)
     }
@@ -40,7 +56,9 @@ export default function WeatherSearch() {
         </button>
       </div>
 
-      {weather && <WeatherCard data={weather} />}
+      {error && <p className="text-red-500 text-center">{error}</p>}
+
+      {weather && !error && <WeatherCard data={weather} />}
     </div>
   )
 }
