@@ -8,12 +8,14 @@ export default function WeatherCard({ data }: { data: any }) {
         <p>Impossible de récupérer les données météo.</p>
       </div>
     )
-  }
-
+  } 
+ 
   const temp = Math.round(data.weather.main.temp)
   const humidity = data.weather.main.humidity
   const windSpeed = data.weather.wind.speed
+  const country = data.weather.sys?.country || '';
 
+  console.log(data);
   // Vérification si 'weather' est un tableau et s'il a au moins un élément
   const description = data.weather.weather?.[0]?.description || 'Aucune description'
 
@@ -25,7 +27,7 @@ export default function WeatherCard({ data }: { data: any }) {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-white">{data.city}</h3>
-              <p className="text-sm text-white/80">{data.city} Location</p>
+              <p className="text-sm text-white/80">Pays: {country} </p>
             </div>
             <span className="text-sm text-white/80">4:30 PM</span>
           </div>

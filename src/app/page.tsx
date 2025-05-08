@@ -12,6 +12,7 @@ import WeatherFooter from '../../components/WeatherFooter'
 // import WeatherMetrics from '../../components/WeatherMetrics'
 import Image from 'next/image'
 import AirQuality from '../../components/AirQuality'
+
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>()
   const {
@@ -23,9 +24,15 @@ export default function Home() {
   // Fetch initial data
   useEffect(() => {
     if (!weatherData) {
-      dispatch(fetchWeather('Paris'))
+      dispatch(fetchWeather('Paris'));
+      document.title = "Météo en temps réel";
+    } else {
+      const cityName = weatherData.city;
+      const temp = Math.round(weatherData.weather.main.temp);
+      const description = weatherData.weather.weather[0].description;
+      document.title = `${cityName} | ${temp}°C | ${description}`;
     }
-  }, [dispatch, weatherData])
+  }, [dispatch, weatherData]);
 
   const date = new Date(weatherData?.timestamp);
   const hours = date.getHours();

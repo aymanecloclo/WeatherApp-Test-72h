@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import WeatherFooter from "../../components/WeatherFooter";
+import DynamicFavicon from "../../components/DynamicFavicon";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,10 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased  min-h-screen bg-blue-400   text-white flex flex-col`}
       >
         <Providers>
+          <head>
+            <DynamicFavicon />
+          </head>
           {children}
         </Providers>
         <WeatherFooter />

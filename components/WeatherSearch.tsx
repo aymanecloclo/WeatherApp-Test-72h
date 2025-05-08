@@ -38,15 +38,13 @@ export default function WeatherSearch() {
 
       <div className="flex gap-2 mb-6">
         <Input
-          type="text"
           value={city}
           onChange={handleCityChange}
           onKeyDown={handleKeyDown}
           placeholder="Entrez une ville..."
-          className="flex-1 p-3 rounded-lg bg-white/10 
-                     focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={loading}
+          className="flex-1 p-3 rounded-lg bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-60"
         />
+
         <Button
           onClick={fetchWeatherData}
           disabled={loading}
