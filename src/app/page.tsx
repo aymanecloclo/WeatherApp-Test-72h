@@ -124,7 +124,7 @@ export default function Home() {
       <div className="md:w-4/12 rounded-lg shadow-xl p-6">
         {/* Search Widget - inchangé */}
         <div className="bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4">
-          <WeatherSearch onSearch={(city) => dispatch(fetchWeather(city))} />
+          <WeatherSearch />
         </div>
 
         {/* Footer - inchangé */}
