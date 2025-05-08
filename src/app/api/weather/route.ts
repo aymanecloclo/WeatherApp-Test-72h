@@ -35,9 +35,8 @@ export async function GET(request: Request) {
     )
   }
 
-  // Configuration
   const API_KEY = process.env.OPENWEATHER_API_KEY
-  const CACHE_TTL = 300 // 5 minutes en secondes
+  const CACHE_TTL = 300
   const cacheKey = `weather:${city.toLowerCase()}`
 
   if (!API_KEY) {
@@ -49,12 +48,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    // 1. Vérifier le cache Redis
+    // Vérifier le cache
     try {
       const cached = await redis.get(cacheKey)
       if (cached) {
         try {
-          const cachedData = JSON.parse(cached)
+          const cachedData = cached;
           return NextResponse.json({ ...cachedData, source: 'cache' })
         } catch (parseError) {
           console.error('Erreur de parsing du cache:', parseError)
@@ -65,17 +64,18 @@ export async function GET(request: Request) {
       console.error('Erreur Redis:', redisError)
     }
 
-    // 2. Récupérer les données météo
-    const weatherParams = {
-      q: city,
-      appid: API_KEY,
-      units: 'metric',
-      lang: 'fr'
-    }
-
+    // Récupérer la météo actuelle
     const weatherRes = await axios.get<WeatherResponse>(
       'https://api.openweathermap.org/data/2.5/weather',
-      { params: weatherParams, timeout: 5000 }
+      {
+        params: {
+          q: city,
+          appid: API_KEY,
+          units: 'metric',
+          lang: 'fr'
+        },
+        timeout: 5000
+      }
     )
 
     const { coord } = weatherRes.data
@@ -83,10 +83,10 @@ export async function GET(request: Request) {
       throw new Error('Coordonnées géographiques manquantes')
     }
 
-    // 3. Récupérer les données de pollution
+    // Récupérer les données de pollution
     const pollutionRes = await axios.get<PollutionResponse>(
       'https://api.openweathermap.org/data/2.5/air_pollution',
-      { 
+      {
         params: {
           lat: coord.lat,
           lon: coord.lon,
@@ -96,16 +96,16 @@ export async function GET(request: Request) {
       }
     )
 
-    // 4. Formater la réponse
+    // Structure de la réponse
     const responseData = {
       city,
+      coord,
       weather: weatherRes.data,
       pollution: pollutionRes.data.list[0] || null,
-      coord,
       timestamp: Date.now()
     }
 
-    // 5. Mettre en cache
+    // Mise en cache
     try {
       await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(responseData))
     } catch (cacheError) {
@@ -120,11 +120,7 @@ export async function GET(request: Request) {
     if (axios.isAxiosError(error)) {
       const status = error.response?.status || 500
       const message = error.response?.data?.message || 'Erreur de communication avec le service météo'
-      
-      return NextResponse.json(
-        { error: message },
-        { status }
-      )
+      return NextResponse.json({ error: message }, { status })
     }
 
     return NextResponse.json(

@@ -1,43 +1,52 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
-import WeatherCard from '../../components/WeatherCard'
-import axiosInstance from '../../lib/axiosInstance'
-import WeatherSearch from '../../components/WeatherSearch'
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { RootState, AppDispatch } from '../redux/store'
+import { fetchWeather } from '../redux/weatherSlice'
+import { FiSun, FiCloudRain, FiCloudSnow, FiCloud, FiWind } from 'react-icons/fi'
+import WeatherDetails from '../../components/WeatherDetails'
 import SunriseSunset from '../../components/SunriseSunset'
 import GeoInfo from '../../components/GeoInfo'
+import WeatherSearch from '../../components/WeatherSearch'
+// import WeatherMetrics from '../../components/WeatherMetrics'
+import Image from 'next/image'
 import AirQuality from '../../components/AirQuality'
-import WeatherDetails from '../../components/WeatherDetails'
-import { FiSun, FiCloudRain, FiCloudSnow, FiCloud, FiWind } from 'react-icons/fi'
-
 export default function Home() {
-  const [weatherTheme, setWeatherTheme] = useState<'default' | 'sunny' | 'rainy' | 'snowy' | 'cloudy'>('default')
-  const [weatherData, setWeatherData] = useState<any>(null)
-  const [city, setCity] = useState<string>('Paris')
-
-  const fetchWeather = useCallback(async (selectedCity: string) => {
-    try {
-      const res = await axiosInstance.get(`/weather?city=${selectedCity}`)
-      setWeatherData(res.data)
-      setCity(selectedCity)
-
-      const weatherMain = res.data.weather.weather[0]?.main?.toLowerCase() || ''
-      setWeatherTheme(
-        weatherMain.includes('sun') ? 'sunny' :
-        weatherMain.includes('rain') ? 'rainy' :
-        weatherMain.includes('snow') ? 'snowy' :
-        weatherMain.includes('cloud') ? 'cloudy' :
-        'default'
-      )
-    } catch (err) {
-      console.error('Erreur météo:', err)
-      setWeatherData(null) 
-    }
-  }, [])
-
+  const dispatch = useDispatch<AppDispatch>()
+  const {
+    data: weatherData,
+    city,
+    theme: weatherTheme,
+    loading
+  } = useSelector((state: RootState) => state.weather)
+  // Fetch initial data
   useEffect(() => {
-    fetchWeather(city) 
-  }, [city, fetchWeather])
-console.log(weatherData);
+    if (!weatherData) {
+      dispatch(fetchWeather('Paris'))
+    }
+  }, [dispatch, weatherData])
+
+  const date = new Date(weatherData?.timestamp);
+  const hours = date.getHours();
+
+  const getTimeOfDay = () => {
+    if (hours >= 5 && hours < 12) return 'Morning';
+    if (hours >= 12 && hours < 17) return 'Afternoon';
+    if (hours >= 17 && hours < 21) return 'Evening';
+    return 'Night';
+  };
+
+  const formattedTime = date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const formattedDate = date.toLocaleDateString([], {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  });
+
   const getWeatherIcon = () => {
     switch (weatherTheme) {
       case 'sunny': return <FiSun className="text-amber-300 text-4xl animate-pulse" />
@@ -50,40 +59,75 @@ console.log(weatherData);
 
   return (
     <main className={`min-h-screen bg-blue-400 p-4 transition-all duration-500 ease-in-out flex flex-col md:flex-row`}>
+
       <div className="md:w-8/12 rounded-lg shadow-xl p-6">
         {weatherData ? (
           <>
-            <WeatherDetails data={weatherData.weather.main} wind={weatherData.weather.wind.speed}  />
-            <SunriseSunset
-              sunrise={weatherData.weather.sys.sunrise}
-              sunset={weatherData.weather.sys.sunset}
-            />
-            <GeoInfo lat={weatherData.coord.lat} lon={weatherData.coord.lon} visibility={weatherData.coord.visibility}  />
+            <div className="">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-blue-900 text-4xl font-light flex items-center gap-2">
+                    {getWeatherIcon()}
+                    Good <span className="font-medium">{getTimeOfDay()}</span>
+                  </h1>
+                </div>
+
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-lg text-blue-900/90">
+                    {formattedDate}
+                  </span>
+                  <span className="text-lg font-mono font-medium text-blue-900 flex items-center">
+                    {formattedTime}
+                  </span>
+                </div>
+              </div>
+
+              {/* Ajoutez WeatherMetrics ici si nécessaire
+              {weatherData.weather && (
+                <WeatherMetrics data={weatherData.weather} />
+              )} */}
+
+        
+
+              <div className="flex gap-2">
+                < AirQuality components={weatherData.pollution.components} aqi={weatherData.pollution.main.aqi} />
+                <div className="">
+                  <WeatherDetails
+                    data={weatherData.weather.main}
+                    wind={weatherData.weather.wind.speed}
+                  />
+                  <SunriseSunset
+                    sunrise={weatherData.weather.sys.sunrise}
+                    sunset={weatherData.weather.sys.sunset}
+                  />
+                  <GeoInfo
+                    lat={weatherData.coord.lat}
+                    lon={weatherData.coord.lon}
+                    visibility={weatherData.weather.visibility}
+                  />
+                </div>
+              </div>
+              <div className="">
+
+
+
+              </div>
+            </div>
           </>
         ) : (
-          <p className="text-white text-lg animate-pulse">Chargement des données météo...</p>
+          <p className="text-white text-lg animate-pulse">
+            {loading ? 'Chargement des données météo...' : 'Aucune donnée disponible'}
+          </p>
         )}
       </div>
 
       <div className="md:w-4/12 rounded-lg shadow-xl p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-3">
-            {getWeatherIcon()}
-            <h1 className="text-4xl font-semibold text-white drop-shadow-lg">
-              Climatic<span className="font-light">.io</span>
-            </h1>
-          </div>
-          <div className="h-12 w-12 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center cursor-pointer">
-            <span className="text-white text-xl">🌎</span>
-          </div>
-        </div>
-
-        {/* Search Widget */}
+        {/* Search Widget - inchangé */}
         <div className="bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4">
-          <WeatherSearch setTheme={setWeatherTheme} onSearch={fetchWeather} />
+          <WeatherSearch onSearch={(city) => dispatch(fetchWeather(city))} />
         </div>
 
-        {/* Footer */}
+        {/* Footer - inchangé */}
         <div className="mt-8 text-center text-white/70 text-sm">
           <p>Donnees météo en temps réel • API OpenWeather</p>
         </div>
