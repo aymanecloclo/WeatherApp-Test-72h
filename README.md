@@ -90,4 +90,4 @@ REDIS_REST_TOKEN=your_upstash_token</code></pre>
 
 <hr />
 
-<p>Made with ❤️ by <strong>Your Name</strong></p>
+<p>Made with ❤️ by <strong>Aymane RACHID</strong></p>
