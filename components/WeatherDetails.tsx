@@ -38,24 +38,24 @@ export default function WeatherMetrics({ data,wind }: WeatherMetricsProps) {
     <>
       <h2 className='text-blue-900 text-lg  font-semibold  '>Météo description :</h2>
 
-    <div className="grid grid-cols-3 gap-4 my-5 w-full">
+      <div className="grid grid-cols-3 gap-4 my-5 w-full ">
       
       {metrics.map((metric) => (
         
         <div
           key={metric.id}
-          className={`flex flex-col  items-center p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 ${metric.color} bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4`}
+          className={`  flex flex-col  items-center p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 ${metric.color} bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4 `}
         >
           
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 rounded-full bg-white/10 ">
+          <div className="flex items-center gap-2 mb-2  ">
+            <div className="p-2 rounded-full bg-white/10  ">
               {metric.icon}
             </div>
-            <span className="text-sm font-medium text-white/80 uppercase tracking-wider">
+            <span className="text-sm font-medium text-white/80 uppercase tracking-wider ">
               {metric.label}
             </span>
           </div>
-          <span className="text-2xl font-bold text-white">
+          <span className="text-xl font-bold text-white">
             {metric.value}
           </span>
         </div>

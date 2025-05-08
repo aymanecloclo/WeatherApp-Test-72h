@@ -12,13 +12,7 @@ export default function WeatherFooter() {
                     <span className="text-xl font-semibold tracking-wide">AY.weather</span>
                 </div>
 
-                {/* Navigation Links */}
-                <div className="flex space-x-6 text-white/80 text-sm mb-4 md:mb-0 items-center">
-                    <a href="#" className="hover:text-white transition">Accueil</a>
-                    <a href="#" className="hover:text-white transition">À propos</a>
-                    <a href="#" className="hover:text-white transition">API</a>
-                </div>
-
+        
                 {/* Social Media */}
                 <div className="flex space-x-4">
                     <a

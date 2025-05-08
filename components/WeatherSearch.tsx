@@ -7,7 +7,7 @@ import WeatherCard from '../components/WeatherCard'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchWeather, setCity } from '../src/redux/weatherSlice'
 import type { RootState } from '../src/redux/store' 
-
+import { Input } from '@/components/ui/input'
 export default function WeatherSearch() {
   const dispatch = useDispatch()
 
@@ -33,24 +33,24 @@ export default function WeatherSearch() {
   }
 
   return (
-    <div className={`max-w-md mx-auto p-4 ${theme}`}>
+    <div className={`md:max-w-md w-full  md:mx-auto p-4 ${theme}`}>
       <h1 className="text-2xl font-bold text-center mb-6 text-white">Météo en temps réel</h1>
 
       <div className="flex gap-2 mb-6">
-        <input
+        <Input
           type="text"
           value={city}
           onChange={handleCityChange}
           onKeyDown={handleKeyDown}
           placeholder="Entrez une ville..."
-          className="flex-1 p-3 rounded-lg bg-white/10 text-white placeholder-white/50 
+          className="flex-1 p-3 rounded-lg bg-white/10 
                      focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />
         <Button
           onClick={fetchWeatherData}
           disabled={loading}
-          className="px-4 py-2 rounded-lg bg-white/10
+          className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20
                      disabled:opacity-50 disabled:cursor-not-allowed
                      flex items-center justify-center gap-2 transition-colors"
           aria-label="Rechercher"
@@ -63,7 +63,7 @@ export default function WeatherSearch() {
           ) : (
             <>
               <FiSearch />
-              <span>Rechercher</span>
+          
             </>
           )}
         </Button>

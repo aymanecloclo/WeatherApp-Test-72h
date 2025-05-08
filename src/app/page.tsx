@@ -59,13 +59,13 @@ export default function Home() {
   }
 
   return (
-    <main className={`min-h-screen bg-blue-400 p-4 transition-all duration-500 ease-in-out flex flex-col md:flex-row`}>
+    <main className={`min-h-screen bg-blue-400 md:p-4 transition-all duration-500 ease-in-out flex flex-col md:flex-row`}>
 
-      <div className="md:w-8/12 rounded-lg shadow-xl p-6">
+      <div className=" md:order-1 order-2 md:w-8/12 rounded-lg shadow-xl p-6">
         {weatherData ? (
           <>
-            <div className="">
-              <div className="flex flex-col gap-1">
+            <div className="  ">
+              <div className=" hidden md:flex  flex-col gap-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-blue-900 text-4xl font-light flex items-center gap-2">
                     {getWeatherIcon()}
@@ -84,10 +84,10 @@ export default function Home() {
               </div>
 
 
-              <div className="flex gap-12">
+              <div className=" flex md:flex-row flex-col gap-12">
                 
                 < AirQuality components={weatherData.pollution.components} aqi={weatherData.pollution.main.aqi} />
-                <div className="w-6/12">
+                <div className="md:w-6/12">
                 
                   <WeatherDetails
                     data={weatherData.weather.main}
@@ -114,9 +114,41 @@ export default function Home() {
         )}
       </div>
 
-      <div className="md:w-4/12 rounded-lg shadow-xl p-6 md:mt-32">
+      <div className="order-1 md:w-4/12 rounded-lg shadow-xl p-6 md:mt-32">
+      <div className="md:hidden  ">
+        {weatherData ? (
+          <>
+            <div className="">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-blue-900 text-4xl font-light flex items-center gap-2">
+                    {getWeatherIcon()}
+                    Good <span className="font-medium">{getTimeOfDay()}</span>
+                  </h1>
+                </div>
+
+                <div className="flex items-center gap-3  mb-5">
+                  <span className="text-lg text-blue-900/90">
+                    {formattedDate}
+                  </span>
+                  <span className="text-lg font-mono font-medium text-blue-900 flex items-center">
+                    {formattedTime}
+                  </span>
+                </div>
+              </div>
+
+
+          
+            </div>
+          </>
+        ) : (
+          <p className="text-white text-lg animate-pulse">
+            {loading ? 'Chargement des données météo...' : 'Aucune donnée disponible'}
+          </p>
+        )}
+        </div>
         {/* Search Widget - inchangé */}
-        <div className="bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4">
+        <div className= " bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4">
           <WeatherSearch />
         </div>
 
