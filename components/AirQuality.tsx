@@ -59,7 +59,7 @@ export default function AirQuality({ aqi, components }: Props) {
   const qualityLevel = Math.min(Math.max(aqi, 1), 5);
 
   return (
-    <div className="bg-gradient-to-b from-sky-500 to-indigo-500 shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-sky-500/25 backdrop-blur-lg rounded-2xl p-6 ">
+    <div className=" md:mt-12 w-6/12 bg-gradient-to-b from-sky-500 to-indigo-500 shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-sky-500/25 backdrop-blur-lg rounded-2xl p-6 ">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold text-white flex items-center gap-2">
           <FaLeaf className="text-emerald-400" />

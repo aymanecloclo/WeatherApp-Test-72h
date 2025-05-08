@@ -8,6 +8,7 @@ import WeatherDetails from '../../components/WeatherDetails'
 import SunriseSunset from '../../components/SunriseSunset'
 import GeoInfo from '../../components/GeoInfo'
 import WeatherSearch from '../../components/WeatherSearch'
+import WeatherFooter from '../../components/WeatherFooter'
 // import WeatherMetrics from '../../components/WeatherMetrics'
 import Image from 'next/image'
 import AirQuality from '../../components/AirQuality'
@@ -72,7 +73,7 @@ export default function Home() {
                   </h1>
                 </div>
 
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center gap-3 ">
                   <span className="text-lg text-blue-900/90">
                     {formattedDate}
                   </span>
@@ -82,16 +83,12 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Ajoutez WeatherMetrics ici si nécessaire
-              {weatherData.weather && (
-                <WeatherMetrics data={weatherData.weather} />
-              )} */}
 
-        
-
-              <div className="flex gap-2">
+              <div className="flex gap-12">
+                
                 < AirQuality components={weatherData.pollution.components} aqi={weatherData.pollution.main.aqi} />
-                <div className="">
+                <div className="w-6/12">
+                
                   <WeatherDetails
                     data={weatherData.weather.main}
                     wind={weatherData.weather.wind.speed}
@@ -107,11 +104,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <div className="">
-
-
-
-              </div>
+      
             </div>
           </>
         ) : (
@@ -121,7 +114,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="md:w-4/12 rounded-lg shadow-xl p-6">
+      <div className="md:w-4/12 rounded-lg shadow-xl p-6 md:mt-32">
         {/* Search Widget - inchangé */}
         <div className="bg-white/20 backdrop-blur-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/30 p-4">
           <WeatherSearch />
@@ -132,6 +125,7 @@ export default function Home() {
           <p>Donnees météo en temps réel • API OpenWeather</p>
         </div>
       </div>
+    
     </main>
   )
 }

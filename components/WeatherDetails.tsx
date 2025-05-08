@@ -36,9 +36,9 @@ export default function WeatherMetrics({ data,wind }: WeatherMetricsProps) {
 
   return (
     <>
-      <h2 className='text-blue-900 text-lg  font-semibold '>Météo description :</h2>
+      <h2 className='text-blue-900 text-lg  font-semibold  '>Météo description :</h2>
 
-    <div className="grid grid-cols-3 gap-4 my-5">
+    <div className="grid grid-cols-3 gap-4 my-5 w-full">
       
       {metrics.map((metric) => (
         
