@@ -2,11 +2,10 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import type { RootState } from '../src/redux/store' 
+import { useAppSelector } from '@/lib/hooks'
 
 export default function DynamicFavicon() {
-    const { theme } = useSelector((state: RootState) => state.weather)
+    const { theme } = useAppSelector((state) => state.weather)
 
     useEffect(() => {
         const getFaviconPath = () => {
@@ -19,7 +18,8 @@ export default function DynamicFavicon() {
             }
         }
 
-        const link = document.querySelector("link[rel*='icon']") || document.createElement('link')
+        // Type the link element properly
+        const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link') as HTMLLinkElement
         link.type = 'image/x-icon'
         link.rel = 'shortcut icon'
         link.href = getFaviconPath()
