@@ -13,7 +13,7 @@
   <li>🎨 Tailwind CSS 4 for responsive styling</li>
   <li>🗃️ Upstash Redis caching for faster responses</li>
   <li>💨 Framer Motion animations</li>
-  <li>🌐 Deploy-ready for <a href="https://www.netlify.com/" target="_blank">Netlify</a> or <a href="https://vercel.com/" target="_blank">Vercel</a></li>
+  <li>🌐 Deploy-ready for <a href="https://www.netlify.com/" target="_blank">Netlify</a> </li>
   <li>📦 Optimized with Turbopack for development</li>
 </ul>
 
@@ -87,6 +87,25 @@ REDIS_REST_TOKEN=your_upstash_token</code></pre>
 <p>
   Pull requests and feedback are welcome! For major changes, please open an issue first to discuss what you'd like to change.
 </p>
+
+<hr />
+
+<h2>📸 Screenshots</h2>
+<p>Here is a preview of the Weather App:</p>
+<img src="/public/images/Redis/before.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
+<img src="/public/images/Redis/before2.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
+
+<p>Screenshot shows the main weather page with city search and weather details.</p>
+<p>after redis :</p>
+<img src="/public/images/Redis/after.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
+<img src="/public/images/Redis/after2.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
+
+<pre><code>REDIS_REST_URL=your_upstash_url
+REDIS_REST_TOKEN=your_upstash_token</code></pre>
+
+<p>We use the Redis client to store and retrieve weather data, ensuring that repeated requests do not require a new API call if the data is cached.</p>
+
+<p>Once your environment variables are set, Redis will handle caching automatically on the server side!</p>
 
 <hr />
 
