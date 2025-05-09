@@ -43,7 +43,7 @@ npm start</code></pre>
   <li><strong>Styling</strong>: <a href="https://tailwindcss.com/">Tailwind CSS 4</a></li>
   <li><strong>State Management</strong>: <a href="https://redux-toolkit.js.org/">Redux Toolkit</a></li>
   <li><strong>API</strong>: <a href="https://axios-http.com/">Axios</a></li>
-  <li><strong>Icons</strong>: <a href="https://lucide.dev/">Lucide</a>, <a href="https://react-icons.github.io/react-icons/">React Icons</a></li>
+  <li><strong>Icons</strong>: <a href="https://react-icons.github.io/react-icons/">React Icons</a></li>
   <li><strong>Animations</strong>: <a href="https://www.framer.com/motion/">Framer Motion</a></li>
   <li><strong>Caching</strong>: <a href="https://upstash.com/redis">Upstash Redis</a></li>
   <li><strong>Deployment</strong>: Netlify </li>
