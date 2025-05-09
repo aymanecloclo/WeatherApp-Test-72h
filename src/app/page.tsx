@@ -9,7 +9,7 @@ import SunriseSunset from '../../components/SunriseSunset'
 import GeoInfo from '../../components/GeoInfo'
 import WeatherSearch from '../../components/WeatherSearch'
 import WeatherFooter from '../../components/WeatherFooter'
-// import WeatherMetrics from '../../components/WeatherMetrics'
+
 import Image from 'next/image'
 import AirQuality from '../../components/AirQuality'
 
