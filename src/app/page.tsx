@@ -9,7 +9,7 @@ import SunriseSunset from '../../components/SunriseSunset'
 import GeoInfo from '../../components/GeoInfo'
 import WeatherSearch from '../../components/WeatherSearch'
 import WeatherFooter from '../../components/WeatherFooter'
-import ErrorDisplay from '../../components/ErrorDisplay'
+
 import LoadingSpinner from '../../components/LoadingSpinner'
 import Image from 'next/image'
 import AirQuality from '../../components/AirQuality'
@@ -43,9 +43,25 @@ export default function Home() {
     }
   }, [weatherData]);
 
-  const date = new Date(weatherData?.timestamp);
-  const hours = date.getHours();
+  // Safe date handling
+  const getDateInfo = () => {
+    if (!weatherData?.timestamp) {
+      return {
+        hours: new Date().getHours(),
+        formattedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        formattedDate: new Date().toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })
+      }
+    }
 
+    const date = new Date(weatherData.timestamp)
+    return {
+      hours: date.getHours(),
+      formattedTime: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      formattedDate: date.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })
+    }
+  }
+
+  const { hours, formattedTime, formattedDate } = getDateInfo();
   const getTimeOfDay = () => {
     if (hours >= 5 && hours < 12) return 'Morning';
     if (hours >= 12 && hours < 17) return 'Afternoon';
@@ -57,19 +73,7 @@ export default function Home() {
     console.log('Current city:', city);
   }, [weatherData, city]);
 
-  const formattedTime = date.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
 
-  const formattedDate = date.toLocaleDateString([], {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long'
-  });
-  // if (error) {
-  //   return <ErrorDisplay message={error} onRetry={() => dispatch(fetchWeather('Paris'))} />;
-  // }
   if (loading && !weatherData) {
     return <LoadingSpinner />;
   }
