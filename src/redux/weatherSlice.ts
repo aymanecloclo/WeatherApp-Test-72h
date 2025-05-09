@@ -1,62 +1,104 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import axiosInstance from '../../lib/axiosInstance'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import axiosInstance from '../../lib/axiosInstance';
+
+// Types
+interface WeatherResponse {
+    city: string;
+    weather: {
+        main: {
+            temp: number;
+            humidity: number;
+            pressure: number;
+        };
+        weather: Array<{
+            main: string;
+            description: string;
+        }>;
+        wind: {
+            speed: number;
+        };
+    };
+    pollution?: {
+        main: {
+            aqi: number;
+        };
+        components: Record<string, number>;
+    };
+    coord?: {
+        lat: number;
+        lon: number;
+    };
+    timestamp?: number;
+}
+
+type WeatherTheme = 'default' | 'sunny' | 'rainy' | 'snowy' | 'cloudy';
 
 interface WeatherState {
-    data: any | null
-    city: string
-    theme: 'default' | 'sunny' | 'rainy' | 'snowy' | 'cloudy'
-    loading: boolean
-    error: string | null
+    data: WeatherResponse | null;
+    city: string;
+    theme: WeatherTheme;
+    loading: boolean;
+    error: string | null;
 }
 
 const initialState: WeatherState = {
     data: null,
-    city: 'Paris',
+    city: '',
     theme: 'default',
     loading: false,
-    error: null
-}
+    error: null,
+};
 
-export const weatherSlice = createSlice({
+// Async action with proper error handling
+export const fetchWeather = createAsyncThunk(
+    'weather/fetchWeather',
+    async (city: string, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get<WeatherResponse>(`/weather?city=${city}`);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(
+                error.response?.data?.message ||
+                error.message ||
+                'Failed to fetch weather data'
+            );
+        }
+    }
+);
+
+const weatherSlice = createSlice({
     name: 'weather',
     initialState,
     reducers: {
+        resetWeather: () => initialState,
         setCity: (state, action: PayloadAction<string>) => {
-            state.city = action.payload
+            state.city = action.payload;
         },
-        setLoading: (state, action: PayloadAction<boolean>) => {
-            state.loading = action.payload
-        },
-        setWeatherData: (state, action: PayloadAction<any>) => {
-            state.data = action.payload
-            state.loading = false
-            state.error = null
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchWeather.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchWeather.fulfilled, (state, action) => {
+                state.loading = false;
+                state.data = action.payload;
+                state.city = action.payload.city;
 
-            const weatherMain = action.payload.weather.weather[0]?.main?.toLowerCase() || ''
-            state.theme =
-                weatherMain.includes('sun') ? 'sunny' :
-                    weatherMain.includes('rain') ? 'rainy' :
-                        weatherMain.includes('snow') ? 'snowy' :
-                            weatherMain.includes('cloud') ? 'cloudy' : 'default'
-        },
-        setError: (state, action: PayloadAction<string>) => {
-            state.error = action.payload
-            state.loading = false
-        }
-    }
-})
+                const weatherMain = action.payload.weather.weather[0]?.main?.toLowerCase() || '';
+                state.theme =
+                    weatherMain.includes('sun') ? 'sunny' :
+                        weatherMain.includes('rain') ? 'rainy' :
+                            weatherMain.includes('snow') ? 'snowy' :
+                                weatherMain.includes('cloud') ? 'cloudy' : 'default';
+            })
+            .addCase(fetchWeather.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string || 'Unknown error occurred';
+            });
+    },
+});
 
-export const { setCity, setLoading, setWeatherData, setError } = weatherSlice.actions
-
-export const fetchWeather = (city: string) => async (dispatch: any) => {
-    dispatch(setLoading(true))
-    try {
-        const res = await axiosInstance.get(`/weather?city=${city}`)
-        dispatch(setWeatherData(res.data))
-        dispatch(setCity(city))
-    } catch (err) {
-        dispatch(setError('Erreur lors de la récupération des données météo'))
-    }
-}
-
-export default weatherSlice.reducer
+export const { resetWeather, setCity } = weatherSlice.actions;
+export default weatherSlice.reducer;

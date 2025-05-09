@@ -9,30 +9,39 @@ import SunriseSunset from '../../components/SunriseSunset'
 import GeoInfo from '../../components/GeoInfo'
 import WeatherSearch from '../../components/WeatherSearch'
 import WeatherFooter from '../../components/WeatherFooter'
-
+import ErrorDisplay from '../../components/ErrorDisplay'
+import LoadingSpinner from '../../components/LoadingSpinner'
 import Image from 'next/image'
 import AirQuality from '../../components/AirQuality'
+
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>()
   const {
     data: weatherData,
     city,
+    error ,
     theme: weatherTheme,
     loading
   } = useSelector((state: RootState) => state.weather)
-  // Fetch initial data
+
   useEffect(() => {
-    if (!weatherData) {
+   
+    if (!city || city === 'Paris') {  
       dispatch(fetchWeather('Paris'));
       document.title = "Météo en temps réel";
-    } else {
+    }
+  }, [dispatch, city]); 
+
+  useEffect(() => {
+
+    if (weatherData) {
       const cityName = weatherData.city;
       const temp = Math.round(weatherData.weather.main.temp);
       const description = weatherData.weather.weather[0].description;
       document.title = `${cityName} | ${temp}°C | ${description}`;
     }
-  }, [dispatch, weatherData]);
+  }, [weatherData]);
 
   const date = new Date(weatherData?.timestamp);
   const hours = date.getHours();
@@ -43,6 +52,10 @@ export default function Home() {
     if (hours >= 17 && hours < 21) return 'Evening';
     return 'Night';
   };
+  useEffect(() => {
+    console.log('Current weatherData:', weatherData);
+    console.log('Current city:', city);
+  }, [weatherData, city]);
 
   const formattedTime = date.toLocaleTimeString([], {
     hour: '2-digit',
@@ -54,7 +67,12 @@ export default function Home() {
     day: 'numeric',
     month: 'long'
   });
-
+  if (error) {
+    return <ErrorDisplay message={error} onRetry={() => dispatch(fetchWeather('Paris'))} />;
+  }
+  if (loading && !weatherData) {
+    return <LoadingSpinner />;
+  }
   const getWeatherIcon = () => {
     switch (weatherTheme) {
       case 'sunny': return <FiSun className="text-amber-300 text-4xl animate-pulse" />
