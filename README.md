@@ -46,7 +46,7 @@ npm start</code></pre>
   <li><strong>Icons</strong>: <a href="https://lucide.dev/">Lucide</a>, <a href="https://react-icons.github.io/react-icons/">React Icons</a></li>
   <li><strong>Animations</strong>: <a href="https://www.framer.com/motion/">Framer Motion</a></li>
   <li><strong>Caching</strong>: <a href="https://upstash.com/redis">Upstash Redis</a></li>
-  <li><strong>Deployment</strong>: Netlify / Vercel</li>
+  <li><strong>Deployment</strong>: Netlify </li>
 </ul>
 
 <h2>🌍 Environment Variables</h2>
