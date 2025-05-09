@@ -80,6 +80,7 @@ export default function Home() {
                   </h1>
                 </div>
 
+
                 <div className="flex items-center gap-3 ">
                   <span className="text-lg text-blue-900/90">
                     {formattedDate}

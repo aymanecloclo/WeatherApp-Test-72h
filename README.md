@@ -90,15 +90,23 @@ REDIS_REST_TOKEN=your_upstash_token</code></pre>
 
 <hr />
 
-<h2>📸 Screenshots</h2>
-<p>Here is a preview of the Weather App:</p>
-<img src="/public/images/Redis/before.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
-<img src="/public/images/Redis/before2.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
+## 📸 Screenshots
 
-<p>Screenshot shows the main weather page with city search and weather details.</p>
-<p>after redis :</p>
-<img src="/public/images/Redis/after.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
-<img src="/public/images/Redis/after2.png" alt="Weather App Screenshot" style="max-width:100%; border-radius: 8px; margin-top: 20px;" />
+<p>Voici un aperçu de l'application Weather App, <strong>avant et après l'implémentation du cache avec Upstash Redis</strong> :</p>
+
+<div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
+  <div>
+    <h3 style="margin-bottom: 10px;">🟠 Avant l'utilisation du cache (requête directe à l'API)</h3>
+    <img src="./public/images/Redis/before.png" alt="Avant Redis Cache" style="max-width: 100%; border-radius: 8px; border: 1px solid #ccc;" />
+  </div>
+  <div>
+    <h3 style="margin: 20px 0 10px;">🟢 Après l'utilisation du cache Redis (temps de réponse optimisé)</h3>
+    <img src="./public/images/Redis/after.png" alt="Après Redis Cache" style="max-width: 100%; border-radius: 8px; border: 1px solid #ccc;" />
+  </div>
+</div>
+
+<p style="margin-top: 20px; font-style: italic;">✅ Grâce à l’intégration de <strong>Redis</strong>, les performances ont été significativement améliorées avec un temps de réponse plus rapide et une réduction de la charge sur l’API.</p>
+
 
 <pre><code>REDIS_REST_URL=your_upstash_url
 REDIS_REST_TOKEN=your_upstash_token</code></pre>
