@@ -67,9 +67,9 @@ export default function Home() {
     day: 'numeric',
     month: 'long'
   });
-  if (error) {
-    return <ErrorDisplay message={error} onRetry={() => dispatch(fetchWeather('Paris'))} />;
-  }
+  // if (error) {
+  //   return <ErrorDisplay message={error} onRetry={() => dispatch(fetchWeather('Paris'))} />;
+  // }
   if (loading && !weatherData) {
     return <LoadingSpinner />;
   }
