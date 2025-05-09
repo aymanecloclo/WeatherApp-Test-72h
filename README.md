@@ -5,6 +5,13 @@
   <a href="https://nextjs.org/" target="_blank">Next.js</a> 15+ (with App Router), styled with Tailwind CSS, and powered by Redux for state management.
   It integrates with external weather APIs and supports caching via Upstash Redis.
 </p>
+<h2>🔗 Live Demo</h2>
+<p>
+  Vous pouvez tester l'application en ligne ici :  
+  <a href="https://weatherapp-72h.netlify.app" target="_blank" style="font-weight: bold; color: #007acc;">
+    👉 weatherapp-72h.netlify.app
+  </a>
+</p>
 
 <h2>🚀 Features</h2>
 <ul>
