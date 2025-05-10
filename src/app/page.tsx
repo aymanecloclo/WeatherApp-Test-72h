@@ -116,7 +116,7 @@ export default function Home() {
 
               <div className=" flex md:flex-row flex-col gap-12">
                 
-                < AirQuality components={weatherData.pollution.components} aqi={weatherData.pollution.main.aqi} />
+                < AirQuality components={weatherData?.pollution?.components} aqi={weatherData?.pollution?.main.aqi} />
                 <div className="md:w-6/12">
                 
                   <WeatherDetails
@@ -124,13 +124,13 @@ export default function Home() {
                     wind={weatherData.weather.wind.speed}
                   />
                   <SunriseSunset
-                    sunrise={weatherData.weather.sys.sunrise}
-                    sunset={weatherData.weather.sys.sunset}
+                    sunrise={weatherData.weather.sys?.sunrise}
+                    sunset={weatherData.weather.sys?.sunset}
                   />
                   <GeoInfo
-                    lat={weatherData.coord.lat}
-                    lon={weatherData.coord.lon}
-                    visibility={weatherData.weather.visibility}
+                    lat={weatherData?.coord?.lat}
+                    lon={weatherData?.coord?.lon}
+                    visibility={weatherData.weather.visibility?}
                   />
                 </div>
               </div>
