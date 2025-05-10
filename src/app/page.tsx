@@ -130,7 +130,7 @@ export default function Home() {
                   <GeoInfo
                     lat={weatherData?.coord?.lat}
                     lon={weatherData?.coord?.lon}
-                    visibility={weatherData.weather.visibility?}
+                    visibility={weatherData.weather?.visibility}
                   />
                 </div>
               </div>
