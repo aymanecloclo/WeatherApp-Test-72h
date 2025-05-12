@@ -112,9 +112,10 @@ export default function Home() {
 
               <div className=" flex md:flex-row flex-col gap-12">
          
+         
                 <AirQuality
-                  components={weatherData?.pollution?.components || undefined}
-                  aqi={weatherData?.pollution?.main.aqi || undefined}
+                  components={weatherData?.pollution?.components}
+                  aqi={weatherData?.pollution?.main.aqi ?? 0} // Provide fallback
                 />
                 <div className="md:w-6/12">
                 
