@@ -3,8 +3,7 @@ import { FaLeaf, FaSmog, FaWind, FaFire } from 'react-icons/fa';
 import { GiChemicalDrop } from 'react-icons/gi';
 
 interface Props {
-  aqi: number;
-  components: {
+  components?: {
     co?: number;
     no?: number;
     no2?: number;
@@ -14,6 +13,7 @@ interface Props {
     pm10?: number;
     nh3?: number;
   };
+  aqi?: number;
 }
 
 const getAirQualityText = (aqi: number) => {
