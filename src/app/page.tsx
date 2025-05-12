@@ -31,7 +31,7 @@ export default function Home() {
       dispatch(fetchWeather('Paris'));
       document.title = "Météo en temps réel";
     }
-  }, [dispatch, city]); 
+  }, [dispatch]); 
 
   useEffect(() => {
 
@@ -68,10 +68,6 @@ export default function Home() {
     if (hours >= 17 && hours < 21) return 'Evening';
     return 'Night';
   };
-  useEffect(() => {
-    console.log('Current weatherData:', weatherData);
-    console.log('Current city:', city);
-  }, [weatherData, city]);
 
 
   if (loading && !weatherData) {

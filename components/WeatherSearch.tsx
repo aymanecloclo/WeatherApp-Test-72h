@@ -29,7 +29,8 @@ export default function WeatherSearch() {
   }
 
   const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setCity(e.target.value))
+    dispatch(setCity(e.target.value));
+
   }
 
   return (

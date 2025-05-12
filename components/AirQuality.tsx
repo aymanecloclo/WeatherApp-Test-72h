@@ -106,7 +106,7 @@ export default function AirQuality({ aqi, components }: Props) {
   );
 }
 
-function Pollutant({ name, value, unit }: { name: string, value: number, unit: string }) {
+function Pollutant({ name, value, unit }: { name: string, value?: number, unit: string }) {
   return (
     <div className="bg-white/5 hover:bg-white/10 transition-colors rounded-xl p-3 flex items-start gap-3">
       <div className="p-2 rounded-lg bg-white/10">
@@ -115,7 +115,7 @@ function Pollutant({ name, value, unit }: { name: string, value: number, unit: s
       <div>
         <div className="text-sm text-white/70">{name}</div>
         <div className="text-white font-medium">
-          {value.toFixed(2)} <span className="text-xs text-white/50">{unit}</span>
+          {value?.toFixed(2)} <span className="text-xs text-white/50">{unit}</span>
         </div>
       </div>
     </div>
