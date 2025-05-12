@@ -32,7 +32,7 @@ export default function WeatherSearch() {
     dispatch(setCity(e.target.value));
 
   }
-
+// dfdf
   return (
     <div className={`md:max-w-md w-full  md:mx-auto p-4 ${theme}`}>
       <h1 className="text-2xl font-bold text-center mb-6 text-white">Météo en temps réel</h1>
